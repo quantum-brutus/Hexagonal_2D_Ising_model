@@ -1,4 +1,4 @@
-def transition(state_matrix, current_energy, temperature, J, N, n):
+def transition(state_matrix, current_energy, temperature, J, n):
 
     """
     Takes a state (square) matrix of magnetic spins in argument, associated with an Hamiltonian energy, at a given temperature in Kelvin.
@@ -54,6 +54,9 @@ def transition(state_matrix, current_energy, temperature, J, N, n):
             
 
 
+matrix = np.array([[1, 1], [-1, 1]])
+energy = 10
+T, J = 3, 1
 
 
 
