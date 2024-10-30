@@ -1,6 +1,5 @@
-
-import random
 import numpy as np
+
 
 def initial_energy(initial_state_matrix, B_star):  # initial_state is a nxn np array matrix
 
@@ -28,7 +27,7 @@ def initial_energy(initial_state_matrix, B_star):  # initial_state is a nxn np a
     return fni_contribution + magnetic_contribution
 
 
-def calculate_delta_energy(state_matrix, current_energy, indexes, orientation, B_star):
+def calculate_delta_energy(state_matrix, indexes, orientation, B_star):
     
     i,j = indexes
     S = state_matrix
@@ -36,10 +35,12 @@ def calculate_delta_energy(state_matrix, current_energy, indexes, orientation, B
     
     neigbors_config = S[i-1,j] + S[(i+1)%n,j] + S[i,j-1] + S[i,(j+1)%n]
     if orientation == -1 :
-        delta_energy = -neigbors_config + 2*B_star
+        delta_energy = -2*neigbors_config + 2*B_star
     else:
-        delta_energy = neigbors_config - 2*B_star
+        delta_energy = 2*neigbors_config - 2*B_star
     
+    print("config_voisins:", 2*neigbors_config)
+    print("magnetic field", B_star)
     return delta_energy
 
     
@@ -59,7 +60,7 @@ def transition(state_matrix, current_energy, temperature, n, B_star):
     It then returns the new energy and the new state matrix. 
     """
 
-    ## generate the indexes of the magnetic moment we wanted to change (stored in the numpy array indexes),
+    # generate the indexes of the magnetic moment we wanted to change (stored in the numpy array indexes),
     #  and value of that new magnetic moment (stored in the float value)
     
     indexes = np.random.randint(0, n, size=2)
@@ -74,9 +75,13 @@ def transition(state_matrix, current_energy, temperature, n, B_star):
 
     state_matrix[indexes[0], indexes[1]] = orientation
 
-    delta_energy = calculate_delta_energy(state_matrix, current_energy, indexes, orientation, B_star)
+    value = initial_energy(state_matrix, B_star) - initial_energy(initial_matrix, B_star)
+    print("test", value)
+
+    delta_energy = calculate_delta_energy(state_matrix, indexes, orientation, B_star)
 
     if delta_energy < 0 : 
+
         print("newer energy smaller than the old one : delta = ", delta_energy)
 
         print("transition accepted")
