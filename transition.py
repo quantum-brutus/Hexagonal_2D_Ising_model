@@ -1,7 +1,7 @@
 import numpy as np
 
 
-def initial_energy(initial_state_matrix, B_star):  # initial_state is a nxn np array matrix
+def initial_energy(initial_state_matrix, B_star, T_star):  # initial_state is a nxn np array matrix
 
     """
     Takes an initial state (nxn matrix) of values 0 (spin down) and 1 (spin up) 
@@ -21,13 +21,13 @@ def initial_energy(initial_state_matrix, B_star):  # initial_state is a nxn np a
             fni_contribution += m*(S0[i-1,j] + S0[(i+1)%n,j] + S0[i,j-1] + S0[i,(j+1)%n])
     
     
-    fni_contribution*=0.5
+    fni_contribution*=0.6
     magnetic_contribution = -B_star*np.sum(S0)
     
-    return fni_contribution + magnetic_contribution
+    return np.sign(T_star)*(fni_contribution + magnetic_contribution)
 
 
-def calculate_delta_energy(state_matrix, indexes, orientation, B_star):
+def calculate_delta_energy(state_matrix, indexes, orientation, B_star, T_star):
     
     i,j = indexes
     S = state_matrix
@@ -39,9 +39,7 @@ def calculate_delta_energy(state_matrix, indexes, orientation, B_star):
     else:
         delta_energy = 2*neigbors_config - 2*B_star
     
-    print("config_voisins:", 2*neigbors_config)
-    print("magnetic field", B_star)
-    return delta_energy
+    return np.sign(T_star)*delta_energy
 
     
     
