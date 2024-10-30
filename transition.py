@@ -24,10 +24,10 @@ def initial_energy(initial_state_matrix, B_star, T_star):  # initial_state is a 
     fni_contribution*=0.6
     magnetic_contribution = -B_star*np.sum(S0)
     
-    return np.sign(T_star)*fni_contribution + magnetic_contribution
+    return np.sign(T_star)*(fni_contribution + magnetic_contribution)
 
 
-def calculate_delta_energy(state_matrix, indexes, orientation, B_star):
+def calculate_delta_energy(state_matrix, indexes, orientation, B_star, T_star):
     
     i,j = indexes
     S = state_matrix
