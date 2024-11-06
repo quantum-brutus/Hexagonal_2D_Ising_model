@@ -21,7 +21,7 @@ def initial_energy(initial_state_matrix, B_star, T_star):  # initial_state is a 
             fni_contribution += m*(S0[i-1,j] + S0[(i+1)%n,j] + S0[i,j-1] + S0[i,(j+1)%n])
     
     
-    fni_contribution*=0.6
+    fni_contribution*=0.5
     magnetic_contribution = -B_star*np.sum(S0)
     
     return np.sign(T_star)*(fni_contribution + magnetic_contribution)
@@ -44,7 +44,7 @@ def calculate_delta_energy(state_matrix, indexes, orientation, B_star, T_star):
     
     
 
-def transition(state_matrix, current_energy, temperature, n, B_star):
+def transition(state_matrix, current_energy, n, B_star, T_star):
 
     """
     Takes a state (square) matrix of magnetic spins in argument, associated with an Hamiltonian energy, at a given temperature in Kelvin.
@@ -73,10 +73,7 @@ def transition(state_matrix, current_energy, temperature, n, B_star):
 
     state_matrix[indexes[0], indexes[1]] = orientation
 
-    value = initial_energy(state_matrix, B_star) - initial_energy(initial_matrix, B_star)
-    print("test", value)
-
-    delta_energy = calculate_delta_energy(state_matrix, indexes, orientation, B_star)
+    delta_energy = calculate_delta_energy(state_matrix, indexes, orientation, B_star, T_star)
 
     if delta_energy < 0 : 
 
@@ -92,7 +89,7 @@ def transition(state_matrix, current_energy, temperature, n, B_star):
     else : 
         print("newer energy greater than the old one : delta = ", delta_energy)
 
-        if np.random.uniform() <= np.exp(-delta_energy/temperature):
+        if np.random.uniform() <= np.exp(-delta_energy/abs(T_star)):
             
             print("transition accepted !")
 
