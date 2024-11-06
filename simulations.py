@@ -5,7 +5,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 
-def simulation(B_star_norm, T_star, n, nb_iterations):
+def simulation(B_star_norm, T_star, n, nb_iterations, plot):
     
     N = n**2
     B_star = np.sign(T_star)*B_star_norm
@@ -44,7 +44,6 @@ def simulation(B_star_norm, T_star, n, nb_iterations):
     # saving the energies
     energies = np.append(energies, energy)
     mean_energies = np.append(mean_energies, energies.mean())
-    heat_capacities = np.append(heat_capacities, np.var(energies, ddof=1))
 
     # saving the magnetizations
     magnetizations = np.append(magnetizations, magnetization)
@@ -56,13 +55,22 @@ def simulation(B_star_norm, T_star, n, nb_iterations):
     while i <= nb_iterations :
 
         energy, state_matrix = transition(state_matrix, energy, n, B_star, T_star)
+
         magnetization = np.sum(state_matrix)/N
+
         print(state_matrix)
 
         # saving the energies
         energies = np.append(energies, energy)
         mean_energies = np.append(mean_energies, energies.mean())
-        heat_capacities = np.append(heat_capacities, np.var(energies, ddof=1))
+
+        window_size = 30000  # Définit la taille de la tranche pour plus de précision (ajuster selon besoin)
+        if i < window_size:
+            heat_capacities = np.append(heat_capacities, 0)  # Pas de calcul au début
+        else:
+            truncated_energies = [energies[i] for i in range(window_size-1000, len(energies))]  # Garder seulement les derniers `window_size` éléments
+            heat_capacity = np.var(truncated_energies, ddof=1) / (T_star**2)
+            heat_capacities = np.append(heat_capacities, heat_capacity)
 
         # saving the magnetizations
         magnetizations = np.append(magnetizations, magnetization)
@@ -70,53 +78,42 @@ def simulation(B_star_norm, T_star, n, nb_iterations):
 
         i += 1
 
-    heat_capacities/=T_star**2
 
+    if plot == True : 
 
+        # ### graphics ###
+        # Créer une figure avec 3 sous-graphiques (3 lignes, 1 colonne)
+        fig, axs = plt.subplots(1, 3, figsize=(18, 5))  # Ajustez la taille si nécessaire
 
-    # ### graphics ###
+        # Sous-graphe 1 : Évolution de l'énergie
+        axs[0].plot(energies, label='Energie')
+        axs[0].plot(mean_energies, label='Energie moyenne', linestyle='--')
+        axs[0].set_title("Evolution de l'énergie")
+        axs[0].set_xlabel("Pas de simulation")
+        axs[0].set_ylabel("Energie")
+        axs[0].legend()
 
+        # Sous-graphe 2 : Évolution de l'aimantation
+        axs[1].plot(magnetizations, label='Aimantation')
+        axs[1].plot(np.abs(mean_magnetizations), label='Aimantation moyenne', linestyle='--')
+        axs[1].set_title("Evolution de l'aimantation")
+        axs[1].set_xlabel("Pas de simulation")
+        axs[1].set_ylabel("Aimantation")
+        axs[1].legend()
 
-    # # Plotting the data
+        # Sous-graphe 3 : Chaleur spécifique
+        axs[2].plot(heat_capacities, label='Chaleur spécifique', linestyle='--')
+        axs[2].set_title("Chaleur spécifique")
+        axs[2].set_xlabel("Pas de simulation")
+        axs[2].set_ylabel("C_p")
+        axs[2].legend()
 
-    # plt.plot(energies, label='Energie')
-    # plt.plot(mean_energies, label='Energie moyenne', linestyle='--')
+        # Ajuster l'espacement entre les sous-graphiques
+        plt.tight_layout()
 
-    # # Add titles and labels
-    # plt.title("Evolution de l'énergie")
-    # plt.xlabel("Pas de simulation")
-    # plt.ylabel("Energie")
+        # Afficher la figure avec les sous-graphiques
+        plt.show()
 
-    # # Adding a legend
-    # plt.legend()
-
-    # plt.show()
-
-    # plt.plot(magnetizations, label='Aimantation')
-    # plt.plot(mean_magnetizations, label='Aimantation moyenne', linestyle='--')
-
-    # plt.title("Evolution de l'aimantation")
-    # plt.xlabel("Pas de simulation")
-    # plt.ylabel("Aimantation")
-
-    # # Adding a legend
-    # plt.legend()
-
-    # # Show plot
-    # plt.show()
-
-
-    # plt.plot(heat_capacities, label='Chaleur spécifique', linestyle='--')
-
-    # plt.title("Chaleur spécifique")
-    # plt.xlabel("Pas de simulation")
-    # plt.ylabel("C_p")
-
-    # # Adding a legend
-    # plt.legend()
-
-    # # Show plot
-    # plt.show()
 
     return mean_energies[-1], heat_capacities[-1], mean_magnetizations[-1]
 
