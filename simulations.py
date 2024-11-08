@@ -25,56 +25,71 @@ def simulation(B_star_norm, T_star, n, nb_iterations, plot):
     mean_energies = np.array([energy]) # the mean energy of all the steps realized
 
     # magnetization
-    magnetizations = np.array([np.sum(initial_state_matrix)/N]) # the magnetizations of each state
-    mean_magnetizations = np.array([np.sum(initial_state_matrix)/N]) # the mean magnetization of all the steps realized
+
+    initial_magnetization = np.sum(initial_state_matrix)/N
+    magnetizations = np.array([initial_magnetization]) # the magnetizations of each state
+    mean_magnetizations = np.array([initial_magnetization]) # the mean magnetization of all the steps realized
 
     # heat capacity
     heat_capacities = np.array([0])
 
     state_matrix = initial_state_matrix
 
-
-
     # first step
 
-    energy, state_matrix = transition(state_matrix, energy, n, B_star, T_star)
-    magnetization = np.sum(state_matrix)/N
+    energy, state_matrix, new_orientation, transition_accepted = transition(state_matrix, energy, n, B_star, T_star)
+    
+    if transition_accepted == 0 : 
+        magnetization = initial_magnetization 
+        magnetizations = np.append(magnetizations, magnetization)
+        mean_magnetizations = np.append(mean_magnetizations, magnetizations.mean())
+
+    else : 
+        
+        magnetization = initial_magnetization + new_orientation*2/N
+        magnetizations = np.append(magnetizations, magnetization)
+        mean_magnetizations = np.append(mean_magnetizations, magnetizations.mean())
+
     print(state_matrix)
 
     # saving the energies
     energies = np.append(energies, energy)
     mean_energies = np.append(mean_energies, energies.mean())
 
-    # saving the magnetizations
-    magnetizations = np.append(magnetizations, magnetization)
-    mean_magnetizations = np.append(mean_magnetizations, magnetizations.mean())
-
     ### loop ###
 
     i = 1
     while i <= nb_iterations :
 
-        energy, state_matrix = transition(state_matrix, energy, n, B_star, T_star)
+        energy, state_matrix, new_orientation, transition_accepted = transition(state_matrix, energy, n, B_star, T_star)
 
-        magnetization = np.sum(state_matrix)/N
 
         print(state_matrix)
+
+        if transition_accepted == 0 : 
+
+            magnetizations = np.append(magnetizations, magnetization)
+            mean_magnetizations = np.append(mean_magnetizations, magnetizations.mean())
+
+        else : 
+
+            magnetization = magnetization + new_orientation*2/N
+
+            magnetizations = np.append(magnetizations, magnetization)
+            
+            mean_magnetizations = np.append(mean_magnetizations, magnetizations.mean())
 
         # saving the energies
         energies = np.append(energies, energy)
         mean_energies = np.append(mean_energies, energies.mean())
 
-        window_size = 30000  # Définit la taille de la tranche pour plus de précision (ajuster selon besoin)
+        window_size = 15000  # Définit la taille de la tranche pour plus de précision (ajuster selon besoin)
         if i < window_size:
             heat_capacities = np.append(heat_capacities, 0)  # Pas de calcul au début
         else:
             truncated_energies = [energies[i] for i in range(window_size-1000, len(energies))]  # Garder seulement les derniers `window_size` éléments
             heat_capacity = np.var(truncated_energies, ddof=1) / (T_star**2)
             heat_capacities = np.append(heat_capacities, heat_capacity)
-
-        # saving the magnetizations
-        magnetizations = np.append(magnetizations, magnetization)
-        mean_magnetizations = np.append(mean_magnetizations, magnetizations.mean())
 
         i += 1
 

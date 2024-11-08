@@ -55,7 +55,7 @@ def transition(state_matrix, current_energy, n, B_star, T_star):
 
     If not, using random-object from the rand library, it determines whether that state is accepted or not using the probability acceptation.
 
-    It then returns the new energy and the new state matrix. 
+    It then returns the new energy and the new state matrix, as well as the new orientation. 
     """
 
     # generate the indexes of the magnetic moment we wanted to change (stored in the numpy array indexes),
@@ -84,7 +84,7 @@ def transition(state_matrix, current_energy, n, B_star, T_star):
         print("current energy is ", current_energy)
         print("new energy is ", delta_energy + current_energy)
 
-        return(delta_energy + current_energy, state_matrix)
+        return(delta_energy + current_energy, state_matrix, orientation, 1)
 
     else : 
         print("newer energy greater than the old one : delta = ", delta_energy)
@@ -97,7 +97,7 @@ def transition(state_matrix, current_energy, n, B_star, T_star):
             print("current energy is ", current_energy)
             print("new energy is ", delta_energy + current_energy)
 
-            return(delta_energy + current_energy, state_matrix)
+            return(delta_energy + current_energy, state_matrix, orientation, 1)
 
         else :
 
@@ -106,7 +106,7 @@ def transition(state_matrix, current_energy, n, B_star, T_star):
             print("current energy is ", current_energy)
             print("new energy is ", current_energy)
 
-            return(current_energy, initial_matrix)
+            return(current_energy, initial_matrix, -1*orientation, 0)
 
 
 

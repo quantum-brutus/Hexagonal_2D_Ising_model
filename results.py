@@ -6,8 +6,8 @@ import numpy as np
 
 n = 8
 N = n**2
-nb_iterations = 100000
-plot = False ## if true : plot the mean energies, magnetization, heat capacity and their values depending on the simulation step
+nb_iterations = 30000
+plot = False  ## if true : plot the mean energies, magnetization, heat capacity and their values depending on the simulation step
             ## else : plot the mean energies, magnetization, heat capacity depending on the Temperature
 
 
@@ -38,15 +38,17 @@ if not(plot) :
     # Créer une figure avec 1 ligne et 3 colonnes de sous-graphiques
     fig, axs = plt.subplots(1, 3, figsize=(18, 5))  # Ajuste la taille pour une meilleure lisibilité
 
+    T_corrected = [-1*i for i in T]
+
     # Sous-graphe 1 : Évolution de l'énergie moyenne
-    axs[0].plot(T, energies, label='Énergie moyenne', linestyle='--')
+    axs[0].plot(T_corrected, energies, label='Énergie moyenne', linestyle='--')
     axs[0].set_title("Évolution de l'énergie moyenne")
     axs[0].set_xlabel("Température")
     axs[0].set_ylabel("Énergie")
     axs[0].legend()
 
     # Sous-graphe 2 : Aimantation moyenne avec mise à l’échelle
-    axs[2].plot(T, np.abs(magnetizations), label='Aimantation moyenne', linestyle='--')
+    axs[2].plot(T_corrected, np.abs(magnetizations), label='Aimantation moyenne', linestyle='--')
     axs[2].set_title("Évolution de l'aimantation moyenne")
     axs[2].set_xlabel("Température")
     axs[2].set_ylabel("Aimantation")
@@ -55,7 +57,7 @@ if not(plot) :
 
 
     # Sous-graphe 3 : Chaleur spécifique
-    axs[1].plot(T, capacities, label='Chaleur spécifique', linestyle='--')
+    axs[1].plot(T_corrected, capacities, label='Chaleur spécifique', linestyle='--')
     axs[1].set_title("Chaleur spécifique")
     axs[1].set_xlabel("Température")
     axs[1].set_ylabel("Capacité thermique")
