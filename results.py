@@ -1,24 +1,25 @@
+###################### imports ###########################
 from simulations import simulation
 import matplotlib.pyplot as plt
 import numpy as np
 
+
 ###################### parameters ###########################
+# everything is normalized by the factor 1/2*J*mu**2,
+# and the Boltzmann constant k_B is attached to T_star
 
 n = [3]
 N = [n**2 for n in n]
-nb_iterations = 1000
+nb_iterations = 5000
+hexagonal = False
 plot = False  ## if true : plot the mean energies, magnetization, heat capacity and their values depending on the simulation step
             ## else : plot the mean energies, magnetization, heat capacity depending on the Temperature
 
-
-'''
-everything is normalized by the factor 1/2*J*mu**2,
-and the Boltzmann constant k_B is attached to T_star
-'''
 B_star_norm = 0  # norm of the applied magnetic fiel, must be POSITIVE
 T = [-4.5 + 0.1*i for i in range(44)]  # range of simulation temperatures
 
 #############################################################
+
 
 energies, capacities, magnetizations = [[] for i in n], [[] for i in n], [[] for i in n]
 
@@ -26,7 +27,7 @@ for index, number_of_atoms in enumerate(n) :
 
     for T_star in T : 
 
-        energy, capacity, magnetization = simulation(B_star_norm, T_star, number_of_atoms, nb_iterations, plot)
+        energy, capacity, magnetization = simulation(B_star_norm, T_star, number_of_atoms, nb_iterations, plot, hexagonal)
 
         energies[index].append(energy)
         capacities[index].append(capacity)
