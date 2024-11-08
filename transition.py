@@ -1,50 +1,87 @@
 import numpy as np
 
 
-def initial_energy(initial_state_matrix, B_star, T_star):  # initial_state is a nxn np array matrix
+def initial_energy(initial_state_matrix, B_star, T_star, hexagonal = False):  # initial_state is a nxn np array matrix
 
     """
     Takes an initial state (nxn matrix) of values 0 (spin down) and 1 (spin up) 
     and a magnetic field in arguments and computes the Hamiltonian energy 
     of this initial state of the system.
     """
-    
-    S0 = initial_state_matrix
-    n = len(S0)
+    if not(hexagonal) : 
+        S0 = initial_state_matrix
+        n = len(S0)
 
-    fni_contribution = 0   # 'fni' for 'first neighbor interaction'
-    
-    for i in range(n):
-        for j in range(n):
-            
-            m = S0[i,j]
-            fni_contribution += m*(S0[i-1,j] + S0[(i+1)%n,j] + S0[i,j-1] + S0[i,(j+1)%n])
-    
-    
-    fni_contribution*=0.5
-    magnetic_contribution = -B_star*np.sum(S0)
-    
-    return np.sign(T_star)*(fni_contribution + magnetic_contribution)
+        fni_contribution = 0   # 'fni' for 'first neighbor interaction'
+        
+        for i in range(n):
+            for j in range(n):
+                
+                m = S0[i,j]
+                fni_contribution += m*(S0[i-1,j] + S0[(i+1)%n,j] + S0[i,j-1] + S0[i,(j+1)%n])
+        
+        
+        fni_contribution*=0.5
+        magnetic_contribution = -B_star*np.sum(S0)
+        
+        return np.sign(T_star)*(fni_contribution + magnetic_contribution)
+
+    else : 
+        S0 = initial_state_matrix
+        n = len(S0)
+
+        fni_contribution = 0   # 'fni' for 'first neighbor interaction'
+        
+        for i in range(n):
+            for j in range(n):
+                
+                m = S0[i,j]
+                fni_contribution += m*(S0[i-1,j] + S0[i-1,(j+1)%n] + S0[(i+1)%n,j] + S0[(i+1)%n,(j+1)%n] + S0[i,j-1] + S0[i,(j+1)%n])
+        
+        
+        fni_contribution*=0.5
+        magnetic_contribution = -B_star*np.sum(S0)
+        
+        return np.sign(T_star)*(fni_contribution + magnetic_contribution)
 
 
-def calculate_delta_energy(state_matrix, indexes, orientation, B_star, T_star):
+
+def calculate_delta_energy(state_matrix, indexes, orientation, B_star, T_star, hexagonal = False):
     
-    i,j = indexes
-    S = state_matrix
-    n = len(S)
-    
-    neigbors_config = S[i-1,j] + S[(i+1)%n,j] + S[i,j-1] + S[i,(j+1)%n]
-    if orientation == -1 :
-        delta_energy = -2*neigbors_config + 2*B_star
-    else:
-        delta_energy = 2*neigbors_config - 2*B_star
-    
-    return np.sign(T_star)*delta_energy
+    if not(hexagonal) : 
+
+        i,j = indexes
+        S = state_matrix
+        n = len(S)
+        
+        neigbors_config = S[i-1,j] + S[(i+1)%n,j] + S[i,j-1] + S[i,(j+1)%n]
+        if orientation == -1 :
+            delta_energy = -2*neigbors_config + 2*B_star
+        else:
+            delta_energy = 2*neigbors_config - 2*B_star
+        
+        return np.sign(T_star)*delta_energy
+
+    else : 
+        
+        i,j = indexes
+        S = state_matrix
+        n = len(S)
+        
+        neigbors_config = S[i-1,j] + S[i-1,(j+1)%n] +S[(i+1)%n,j] + S[i,j-1] + S[i,(j+1)%n] + S[(i+1)%n,(j+1)%n]
+
+        if orientation == -1 :
+            delta_energy = -2*neigbors_config + 2*B_star
+        else:
+            delta_energy = 2*neigbors_config - 2*B_star
+        
+        return np.sign(T_star)*delta_energy
+
 
     
     
 
-def transition(state_matrix, current_energy, n, B_star, T_star):
+def transition(state_matrix, current_energy, n, B_star, T_star, hexagonal = False):
 
     """
     Takes a state (square) matrix of magnetic spins in argument, associated with an Hamiltonian energy, at a given temperature in Kelvin.
@@ -73,7 +110,7 @@ def transition(state_matrix, current_energy, n, B_star, T_star):
 
     state_matrix[indexes[0], indexes[1]] = orientation
 
-    delta_energy = calculate_delta_energy(state_matrix, indexes, orientation, B_star, T_star)
+    delta_energy = calculate_delta_energy(state_matrix, indexes, orientation, B_star, T_star, hexagonal)
 
     if delta_energy < 0 : 
 

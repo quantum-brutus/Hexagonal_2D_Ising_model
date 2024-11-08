@@ -5,7 +5,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 
-def simulation(B_star_norm, T_star, n, nb_iterations, plot):
+def simulation(B_star_norm, T_star, n, nb_iterations, plot, hexagonal = False):
     
     N = n**2
     B_star = np.sign(T_star)*B_star_norm
@@ -13,7 +13,7 @@ def simulation(B_star_norm, T_star, n, nb_iterations, plot):
     ### initialisation ###
 
     initial_state_matrix = np.random.choice([-1, 1], size=(n, n))
-    energy = initial_energy(initial_state_matrix, B_star, T_star)
+    energy = initial_energy(initial_state_matrix, B_star, T_star, hexagonal)
 
     print(initial_state_matrix)
     print("Initial energy is :", energy)
@@ -37,7 +37,7 @@ def simulation(B_star_norm, T_star, n, nb_iterations, plot):
 
     # first step
 
-    energy, state_matrix, new_orientation, transition_accepted = transition(state_matrix, energy, n, B_star, T_star)
+    energy, state_matrix, new_orientation, transition_accepted = transition(state_matrix, energy, n, B_star, T_star, hexagonal)
     
     if transition_accepted == 0 : 
         magnetization = initial_magnetization 
@@ -61,8 +61,7 @@ def simulation(B_star_norm, T_star, n, nb_iterations, plot):
     i = 1
     while i <= nb_iterations :
 
-        energy, state_matrix, new_orientation, transition_accepted = transition(state_matrix, energy, n, B_star, T_star)
-
+        energy, state_matrix, new_orientation, transition_accepted = transition(state_matrix, energy, n, B_star, T_star, hexagonal)
 
         print(state_matrix)
 

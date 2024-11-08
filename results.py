@@ -4,9 +4,9 @@ import numpy as np
 
 ###################### parameters ###########################
 
-n = [3, 8, 12, 20]
+n = [3]
 N = [n**2 for n in n]
-nb_iterations = 100000
+nb_iterations = 1000
 plot = False  ## if true : plot the mean energies, magnetization, heat capacity and their values depending on the simulation step
             ## else : plot the mean energies, magnetization, heat capacity depending on the Temperature
 
