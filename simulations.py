@@ -13,16 +13,16 @@ def simulation(B_star_norm, T_star, n, nb_iterations, plot, hexagonal = False):
     ### initialisation ###
 
     initial_state_matrix = np.random.choice([-1, 1], size=(n, n))
-    energy = initial_energy(initial_state_matrix, B_star, T_star, hexagonal)
+    initialenergy = initial_energy(initial_state_matrix, B_star, T_star, hexagonal)
 
     print(initial_state_matrix)
-    print("Initial energy is :", energy)
+    print("Initial energy is :", initialenergy)
 
 
 
     # energy
-    energies = np.array([energy]) # the energies of each state
-    mean_energies = np.array([energy]) # the mean energy of all the steps realized
+    energies = np.array([initialenergy]) # the energies of each state
+    mean_energies = np.array([initialenergy]) # the mean energy of all the steps realized
 
     # magnetization
 
@@ -37,28 +37,34 @@ def simulation(B_star_norm, T_star, n, nb_iterations, plot, hexagonal = False):
 
     # first step
 
-    energy, state_matrix, new_orientation, transition_accepted = transition(state_matrix, energy, n, B_star, T_star, hexagonal)
+    energy, state_matrix, new_orientation, transition_accepted = transition(state_matrix, initialenergy, n, B_star, T_star, hexagonal)
     
     if transition_accepted == 0 : 
+
         magnetization = initial_magnetization 
+        mean_magnetization = magnetization
         magnetizations = np.append(magnetizations, magnetization)
-        mean_magnetizations = np.append(mean_magnetizations, magnetizations.mean())
+        mean_magnetizations = np.append(mean_magnetizations, mean_magnetization)
+
 
     else : 
         
         magnetization = initial_magnetization + new_orientation*2/N
         magnetizations = np.append(magnetizations, magnetization)
-        mean_magnetizations = np.append(mean_magnetizations, magnetizations.mean())
+        mean_magnetization = (initial_magnetization*(len(magnetizations)-1) + magnetization)/len(magnetizations)
+        mean_magnetizations = np.append(mean_magnetizations, mean_magnetization)
 
     print(state_matrix)
 
     # saving the energies
     energies = np.append(energies, energy)
-    mean_energies = np.append(mean_energies, energies.mean())
+    mean_energy = (initialenergy+energy)/2
+    mean_energies = np.append(mean_energies, mean_energy)
 
     ### loop ###
 
     i = 1
+
     while i <= nb_iterations :
 
         energy, state_matrix, new_orientation, transition_accepted = transition(state_matrix, energy, n, B_star, T_star, hexagonal)
@@ -68,19 +74,26 @@ def simulation(B_star_norm, T_star, n, nb_iterations, plot, hexagonal = False):
         if transition_accepted == 0 : 
 
             magnetizations = np.append(magnetizations, magnetization)
-            mean_magnetizations = np.append(mean_magnetizations, magnetizations.mean())
+            
+            mean_magnetization = (mean_magnetizations[-1]*(len(magnetizations)-1) + magnetization)/len(magnetizations)
+
+            mean_magnetizations = np.append(mean_magnetizations, mean_magnetization)
 
         else : 
 
             magnetization = magnetization + new_orientation*2/N
 
             magnetizations = np.append(magnetizations, magnetization)
-            
-            mean_magnetizations = np.append(mean_magnetizations, magnetizations.mean())
+
+            mean_magnetization = (mean_magnetizations[-1]*(len(magnetizations)-1) + magnetization)/len(magnetizations)
+
+            mean_magnetizations = np.append(mean_magnetizations, mean_magnetization)
+
 
         # saving the energies
         energies = np.append(energies, energy)
-        mean_energies = np.append(mean_energies, energies.mean())
+        mean_energy = (mean_energies[-1]*(len(energies)-1) + energy)/len(energies)
+        mean_energies = np.append(mean_energies, mean_energy)
 
         window_size = 15000  # Définit la taille de la tranche pour plus de précision (ajuster selon besoin)
         if i < window_size:
