@@ -10,7 +10,7 @@ import numpy as np
 
 n = [5]
 N = [n**2 for n in n]
-nb_iterations = 50000
+nb_iterations = 25000
 
 
 import time
@@ -18,7 +18,7 @@ import time
 start = time.time()
 
 hexagonal = True
-plot = False  ## if true : plot the mean energies, magnetization, heat capacity and their values depending on the simulation step
+plot = True  ## if true : plot the mean energies, magnetization, heat capacity and their values depending on the simulation step
             ## else : plot the mean energies, magnetization, heat capacity depending on the Temperature
 
 B_star_norm = 0  # norm of the applied magnetic field, must be POSITIVE

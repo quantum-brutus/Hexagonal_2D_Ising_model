@@ -115,6 +115,7 @@ def transition(state_matrix, current_energy, n, B_star, T_star, hexagonal = Fals
     if delta_energy < 0 : 
 
         print("newer energy smaller than the old one : delta = ", delta_energy)
+        print("the theoretical delta should be ", initial_energy(state_matrix, B_star, T_star, hexagonal = hexagonal)-initial_energy(initial_matrix, B_star, T_star, hexagonal = hexagonal))
 
         print("transition accepted")
 
@@ -125,6 +126,7 @@ def transition(state_matrix, current_energy, n, B_star, T_star, hexagonal = Fals
 
     else : 
         print("newer energy greater than the old one : delta = ", delta_energy)
+        print("the theoretical delta should be ", initial_energy(state_matrix, B_star, T_star, hexagonal = hexagonal)-initial_energy(initial_matrix, B_star, T_star, hexagonal = hexagonal))
 
         if np.random.uniform() <= np.exp(-delta_energy/abs(T_star)):
             
@@ -155,3 +157,23 @@ def transition(state_matrix, current_energy, n, B_star, T_star, hexagonal = Fals
 
 
 
+a = np.array([[ -1, -1, -1, -1,  -1],
+[ -1,  1,  -1,  -1,  -1],
+[ -1,  -1,  -1,  -1,  1],
+[ -1,  -1,  1, 1,  1],
+[-1,  1, 1,  -1,  1]])
+
+
+
+# [[-1 -1 -1 -1 -1]
+#  [-1  1 -1 -1 -1]
+#  [-1 -1 -1 -1  1]
+#  [-1 -1  1  1  1]
+#  [-1  1  1 -1  1]]
+
+
+print(initial_energy(a, 0, -1, hexagonal = False))
+
+a[1,0]= -1
+
+print(initial_energy(a, 0, -1, hexagonal = True))
