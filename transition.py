@@ -122,7 +122,7 @@ def transition(state_matrix, current_energy, n, B_star, T_star, hexagonal = Fals
         print("current energy is ", current_energy)
         print("new energy is ", delta_energy + current_energy)
 
-        return(delta_energy + current_energy, state_matrix, orientation, 1)
+        return(delta_energy + current_energy, state_matrix, orientation, 1, indexes)
 
     else : 
         print("newer energy greater than the old one : delta = ", delta_energy)
@@ -136,7 +136,7 @@ def transition(state_matrix, current_energy, n, B_star, T_star, hexagonal = Fals
             print("current energy is ", current_energy)
             print("new energy is ", delta_energy + current_energy)
 
-            return(delta_energy + current_energy, state_matrix, orientation, 1)
+            return(delta_energy + current_energy, state_matrix, orientation, 1, indexes)
 
         else :
 
@@ -145,7 +145,7 @@ def transition(state_matrix, current_energy, n, B_star, T_star, hexagonal = Fals
             print("current energy is ", current_energy)
             print("new energy is ", current_energy)
 
-            return(current_energy, initial_matrix, -1*orientation, 0)
+            return(current_energy, initial_matrix, -1*orientation, 0, indexes)
 
 
 
@@ -157,11 +157,11 @@ def transition(state_matrix, current_energy, n, B_star, T_star, hexagonal = Fals
 
 
 
-a = np.array([[ -1, -1, -1, -1,  -1],
-[ -1,  1,  -1,  -1,  -1],
-[ -1,  -1,  -1,  -1,  1],
-[ -1,  -1,  1, 1,  1],
-[-1,  1, 1,  -1,  1]])
+a = np.array([[ -1, 1, -1, 1,  -1],
+[ 1,  -1,  1,  -1,  1],
+[ -1,  1,  -1,  1,  -1],
+[ 1,  -1,  1, -1,  1],
+[-1,  1, -1,  1,  -1]])
 
 
 
@@ -172,8 +172,8 @@ a = np.array([[ -1, -1, -1, -1,  -1],
 #  [-1  1  1 -1  1]]
 
 
-print(initial_energy(a, 0, -1, hexagonal = False))
+print(initial_energy(a, 0, 1, hexagonal = False))
 
-a[1,0]= -1
+# a[1,0]= -1
 
-print(initial_energy(a, 0, -1, hexagonal = True))
+# print(initial_energy(a, 0, -1, hexagonal = True))

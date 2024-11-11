@@ -8,21 +8,21 @@ import numpy as np
 # everything is normalized by the factor 1/2*J*mu**2,
 # and the Boltzmann constant k_B is attached to T_star
 
-n = [5]
+n = [10]
 N = [n**2 for n in n]
-nb_iterations = 25000
+nb_iterations = 50000
 
 
 import time
 
 start = time.time()
 
-hexagonal = True
-plot = True  ## if true : plot the mean energies, magnetization, heat capacity and their values depending on the simulation step
+hexagonal = False
+plot = False  ## if true : plot the mean energies, magnetization, heat capacity and their values depending on the simulation step
             ## else : plot the mean energies, magnetization, heat capacity depending on the Temperature
 
 B_star_norm = 0  # norm of the applied magnetic field, must be POSITIVE
-T = [-4.5 + 0.1*i for i in range(44)]  # range of simulation temperatures. A negative value of temperature means a negative coupling coefficient between spins
+T = [0.1*i for i in range(1,45)]  # range of simulation temperatures. A negative value of temperature means a negative coupling coefficient between spins
 
 #############################################################
 
@@ -52,7 +52,11 @@ if not(plot) :
     linestyles = ["--", "--", "--"]
     linewidth = 1.5
 
-    T_corrected = [-1*i for i in T]
+    if T[0] <0 : 
+        T_corrected = [-1*i for i in T]
+
+    else : 
+        T_corrected = [i for i in T]
 
 
     # Loop over each index and value of n to plot data for each n
