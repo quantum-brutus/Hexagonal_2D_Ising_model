@@ -25,10 +25,34 @@ def simulation(B_star_norm, T_star, n, nb_iterations, plot, hexagonal = False):
     mean_energies = np.array([initialenergy]) # the mean energy of all the steps realized
 
     # magnetization
+    if T_star<0 : ##ferromagnetic case
 
-    initial_magnetization = np.sum(initial_state_matrix)/N
-    magnetizations = np.array([initial_magnetization]) # the magnetizations of each state
-    mean_magnetizations = np.array([initial_magnetization]) # the mean magnetization of all the steps realized
+        initial_magnetization = np.sum(initial_state_matrix)/N
+        magnetizations = np.array([initial_magnetization]) # the magnetizations of each state
+        mean_magnetizations = np.array([initial_magnetization]) # the mean magnetization of all the steps realized
+    
+    elif T_star>0 : ##antiferromagnetic case, we want to observe the alternated sum of the magnetic moments
+         # Calculate the alternating magnetization
+
+        initial_magnetization = np.sum(initial_state_matrix)/N
+        magnetizations = np.array([initial_magnetization]) # the magnetizations of each state
+        mean_magnetizations = np.array([initial_magnetization]) # the mean magnetization of all the steps realized
+    
+        # rows, cols = initial_state_matrix.shape
+        
+        # initial_magnetization = 0
+
+        # for i in range(rows):
+        #     for j in range(cols):
+        #         # Alternate sign based on the sum of indices
+        #         sign = (-1) ** (i + j)
+        #         initial_magnetization += sign * initial_state_matrix[i, j]
+        
+        # initial_magnetization /= N
+
+        # magnetizations = np.array([initial_magnetization]) # the magnetizations of each state
+        # mean_magnetizations = np.array([initial_magnetization]) # the mean magnetization of all the steps realized
+
 
     # heat capacity
     heat_capacities = np.array([0])
@@ -37,9 +61,10 @@ def simulation(B_star_norm, T_star, n, nb_iterations, plot, hexagonal = False):
 
     # first step
 
-    energy, state_matrix, new_orientation, transition_accepted = transition(state_matrix, initialenergy, n, B_star, T_star, hexagonal)
+    energy, state_matrix, new_orientation, transition_accepted, spin_chosen = transition(state_matrix, initialenergy, n, B_star, T_star, hexagonal)
     
     if transition_accepted == 0 : 
+        
 
         magnetization = initial_magnetization 
         mean_magnetization = magnetization
@@ -48,11 +73,23 @@ def simulation(B_star_norm, T_star, n, nb_iterations, plot, hexagonal = False):
 
 
     else : 
-        
-        magnetization = initial_magnetization + new_orientation*2/N
-        magnetizations = np.append(magnetizations, magnetization)
-        mean_magnetization = (initial_magnetization*(len(magnetizations)-1) + magnetization)/len(magnetizations)
-        mean_magnetizations = np.append(mean_magnetizations, mean_magnetization)
+
+        if T_star<0 : ##ferromagnetic case
+
+            magnetization = initial_magnetization + new_orientation*2/N
+            magnetizations = np.append(magnetizations, magnetization)
+            mean_magnetization = (initial_magnetization*(len(magnetizations)-1) + magnetization)/len(magnetizations)
+            mean_magnetizations = np.append(mean_magnetizations, mean_magnetization)
+
+        elif T_star>0 : ##antiferromagnetic case, we want to observe the alternated sum of the magnetic moments
+            # magnetization = initial_magnetization + ((-1) ** (spin_chosen[0] + spin_chosen[1]))*new_orientation*2/N
+            # magnetizations = np.append(magnetizations, magnetization)
+            # mean_magnetization = (initial_magnetization*(len(magnetizations)-1) + magnetization)/len(magnetizations)
+            # mean_magnetizations = np.append(mean_magnetizations, mean_magnetization)
+            magnetization = initial_magnetization + new_orientation*2/N
+            magnetizations = np.append(magnetizations, magnetization)
+            mean_magnetization = (initial_magnetization*(len(magnetizations)-1) + magnetization)/len(magnetizations)
+            mean_magnetizations = np.append(mean_magnetizations, mean_magnetization)
 
     print(state_matrix)
 
@@ -67,27 +104,49 @@ def simulation(B_star_norm, T_star, n, nb_iterations, plot, hexagonal = False):
 
     while i <= nb_iterations :
 
-        energy, state_matrix, new_orientation, transition_accepted = transition(state_matrix, energy, n, B_star, T_star, hexagonal)
+        energy, state_matrix, new_orientation, transition_accepted, spin_chosen = transition(state_matrix, energy, n, B_star, T_star, hexagonal)
 
         print(state_matrix)
 
         if transition_accepted == 0 : 
 
+                    
             magnetizations = np.append(magnetizations, magnetization)
-            
+                
             mean_magnetization = (mean_magnetizations[-1]*(len(magnetizations)-1) + magnetization)/len(magnetizations)
 
             mean_magnetizations = np.append(mean_magnetizations, mean_magnetization)
 
         else : 
+                
+            if T_star<0 : ##ferromagnetic case
 
-            magnetization = magnetization + new_orientation*2/N
 
-            magnetizations = np.append(magnetizations, magnetization)
+                magnetization = magnetization + new_orientation*2/N
 
-            mean_magnetization = (mean_magnetizations[-1]*(len(magnetizations)-1) + magnetization)/len(magnetizations)
+                magnetizations = np.append(magnetizations, magnetization)
 
-            mean_magnetizations = np.append(mean_magnetizations, mean_magnetization)
+                mean_magnetization = (mean_magnetizations[-1]*(len(magnetizations)-1) + magnetization)/len(magnetizations)
+
+                mean_magnetizations = np.append(mean_magnetizations, mean_magnetization)
+
+            elif T_star>0 : ##antiferromagnetic case, we want to observe the alternated sum of the magnetic moments
+                
+                # magnetization = magnetization + ((-1) ** (spin_chosen[0] + spin_chosen[1]))*new_orientation*2/N
+
+                # magnetizations = np.append(magnetizations, magnetization)
+                
+                # mean_magnetization = (mean_magnetization*(len(magnetizations)-1) + magnetization)/len(magnetizations)
+
+                # mean_magnetizations = np.append(mean_magnetizations, mean_magnetization)
+
+                magnetization = magnetization + new_orientation*2/N
+
+                magnetizations = np.append(magnetizations, magnetization)
+
+                mean_magnetization = (mean_magnetizations[-1]*(len(magnetizations)-1) + magnetization)/len(magnetizations)
+
+                mean_magnetizations = np.append(mean_magnetizations, mean_magnetization)
 
 
         # saving the energies

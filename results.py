@@ -8,7 +8,7 @@ import numpy as np
 # everything is normalized by the factor 1/2*J*mu**2,
 # and the Boltzmann constant k_B is attached to T_star
 
-n = [5]
+n = [6]
 N = [n**2 for n in n]
 nb_iterations = 25000
 
@@ -18,11 +18,17 @@ import time
 start = time.time()
 
 hexagonal = True
-plot = True  ## if true : plot the mean energies, magnetization, heat capacity and their values depending on the simulation step
+plot = False  ## if true : plot the mean energies, magnetization, heat capacity and their values depending on the simulation step
             ## else : plot the mean energies, magnetization, heat capacity depending on the Temperature
 
-B_star_norm = 0  # norm of the applied magnetic field, must be POSITIVE
-T = [-4.5 + 0.1*i for i in range(44)]  # range of simulation temperatures. A negative value of temperature means a negative coupling coefficient between spins
+antiferromagnetic = True 
+
+B_star_norm = 0 # norm of the applied magnetic field, must be POSITIVE
+
+if antiferromagnetic :  
+    T = [0.1*i for i in range(1,45)]  # range of simulation temperatures. A negative value of temperature means a negative coupling coefficient between spins
+else :
+    T = [-4.5+0.1*i for i in range(0,44, 15)]  # range of simulation temperatures. A negative value of temperature means a negative coupling coefficient between spins
 
 #############################################################
 
@@ -51,9 +57,12 @@ if not(plot) :
     colors = ["royalblue", "darkorange", "seagreen"]
     linestyles = ["--", "--", "--"]
     linewidth = 1.5
+    
+    if T[0] <0 : 
+        T_corrected = [-1*i for i in T]
 
-    T_corrected = [-1*i for i in T]
-
+    else : 
+        T_corrected = [i for i in T]
 
     # Loop over each index and value of n to plot data for each n
     for idx, n_values in enumerate(n):
@@ -90,7 +99,7 @@ if not(plot) :
     axs[2].grid(True, linestyle=":", color="grey", alpha=0.6)
 
     # Adjust layout and add a main title for the figure
-    fig.suptitle("Analyse Thermodynamique en fonction du nombre d'atomes considérés dans la simulation", fontsize=18, fontweight='bold')
+    fig.suptitle("Analyse Thermodynamique", fontsize=18, fontweight='bold')
 
 
     # Subtitle positioned slightly below the main title
