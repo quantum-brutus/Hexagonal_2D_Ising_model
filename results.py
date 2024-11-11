@@ -94,7 +94,7 @@ if not(plot) :
     axs[2].grid(True, linestyle=":", color="grey", alpha=0.6)
 
     # Adjust layout and add a main title for the figure
-    fig.suptitle("Analyse Thermodynamique en fonction du nombre d'atomes considérés dans la simulation", fontsize=18, fontweight='bold')
+    fig.suptitle("Analyse Thermodynamique", fontsize=18, fontweight='bold')
 
 
     # Subtitle positioned slightly below the main title
