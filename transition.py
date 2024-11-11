@@ -110,7 +110,9 @@ def transition(state_matrix, current_energy, n, B_star, T_star, hexagonal = Fals
 
     state_matrix[indexes[0], indexes[1]] = orientation
 
-    delta_energy = calculate_delta_energy(state_matrix, indexes, orientation, B_star, T_star, hexagonal)
+    # delta_energy = calculate_delta_energy(state_matrix, indexes, orientation, B_star, T_star, hexagonal)
+
+    delta_energy = initial_energy(state_matrix, B_star, T_star, hexagonal = hexagonal)-initial_energy(initial_matrix, B_star, T_star, hexagonal = hexagonal)
 
     if delta_energy < 0 : 
 
