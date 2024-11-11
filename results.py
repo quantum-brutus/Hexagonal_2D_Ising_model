@@ -1,24 +1,37 @@
+###################### imports ###########################
 from simulations import simulation
 import matplotlib.pyplot as plt
 import numpy as np
 
-###################### parameters ###########################
 
-n = [3, 8, 12, 20]
+###################### parameters ###########################
+# everything is normalized by the factor 1/2*J*mu**2,
+# and the Boltzmann constant k_B is attached to T_star
+
+n = [6]
 N = [n**2 for n in n]
-nb_iterations = 100000
+nb_iterations = 25000
+
+
+import time
+
+start = time.time()
+
+hexagonal = True
 plot = False  ## if true : plot the mean energies, magnetization, heat capacity and their values depending on the simulation step
             ## else : plot the mean energies, magnetization, heat capacity depending on the Temperature
 
+antiferromagnetic = True 
 
-'''
-everything is normalized by the factor 1/2*J*mu**2,
-and the Boltzmann constant k_B is attached to T_star
-'''
-B_star_norm = 0  # norm of the applied magnetic fiel, must be POSITIVE
-T = [-4.5 + 0.1*i for i in range(44)]  # range of simulation temperatures
+B_star_norm = 0 # norm of the applied magnetic field, must be POSITIVE
+
+if antiferromagnetic :  
+    T = [0.1*i for i in range(1,45)]  # range of simulation temperatures. A negative value of temperature means a negative coupling coefficient between spins
+else :
+    T = [-4.5+0.1*i for i in range(0,44, 15)]  # range of simulation temperatures. A negative value of temperature means a negative coupling coefficient between spins
 
 #############################################################
+
 
 energies, capacities, magnetizations = [[] for i in n], [[] for i in n], [[] for i in n]
 
@@ -26,7 +39,7 @@ for index, number_of_atoms in enumerate(n) :
 
     for T_star in T : 
 
-        energy, capacity, magnetization = simulation(B_star_norm, T_star, number_of_atoms, nb_iterations, plot)
+        energy, capacity, magnetization = simulation(B_star_norm, T_star, number_of_atoms, nb_iterations, plot, hexagonal)
 
         energies[index].append(energy)
         capacities[index].append(capacity)
@@ -44,9 +57,12 @@ if not(plot) :
     colors = ["royalblue", "darkorange", "seagreen"]
     linestyles = ["--", "--", "--"]
     linewidth = 1.5
+    
+    if T[0] <0 : 
+        T_corrected = [-1*i for i in T]
 
-    T_corrected = [-1*i for i in T]
-
+    else : 
+        T_corrected = [i for i in T]
 
     # Loop over each index and value of n to plot data for each n
     for idx, n_values in enumerate(n):
@@ -83,7 +99,7 @@ if not(plot) :
     axs[2].grid(True, linestyle=":", color="grey", alpha=0.6)
 
     # Adjust layout and add a main title for the figure
-    fig.suptitle("Analyse Thermodynamique en fonction du nombre d'atomes considérés dans la simulation", fontsize=18, fontweight='bold')
+    fig.suptitle("Analyse Thermodynamique", fontsize=18, fontweight='bold')
 
 
     # Subtitle positioned slightly below the main title
@@ -92,6 +108,14 @@ if not(plot) :
     
     # Adjust layout to prevent overlap
     plt.tight_layout(pad=3)   
+
+
+
+    end = time.time()
+
+    time = end-start 
+
+    print("TIME WAS ", time)
 
     # Show the figure
     plt.show()
