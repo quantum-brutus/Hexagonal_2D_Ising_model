@@ -5,20 +5,23 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 
-def simulation(B_star_norm, T_star, n, nb_iterations, plot, hexagonal = False):
+def simulation(B_star_norm, T_star, n, nb_iterations, plot, hexagonal = False, state = None):
     
     N = n**2
     B_star = np.sign(T_star)*B_star_norm
 
     ### initialisation ###
+    if state.any() == None :
+            
+        initial_state_matrix = np.random.choice([-1, 1], size=(n, n))
+        initialenergy = initial_energy(initial_state_matrix, B_star, T_star, hexagonal)
 
-    initial_state_matrix = np.random.choice([-1, 1], size=(n, n))
-    initialenergy = initial_energy(initial_state_matrix, B_star, T_star, hexagonal)
+    else : 
+        initial_state_matrix = state
+        initialenergy = initial_energy(initial_state_matrix, B_star, T_star, hexagonal)
 
     print(initial_state_matrix)
     print("Initial energy is :", initialenergy)
-
-
 
     # energy
     energies = np.array([initialenergy]) # the energies of each state
@@ -86,6 +89,8 @@ def simulation(B_star_norm, T_star, n, nb_iterations, plot, hexagonal = False):
             # magnetizations = np.append(magnetizations, magnetization)
             # mean_magnetization = (initial_magnetization*(len(magnetizations)-1) + magnetization)/len(magnetizations)
             # mean_magnetizations = np.append(mean_magnetizations, mean_magnetization)
+
+
             magnetization = initial_magnetization + new_orientation*2/N
             magnetizations = np.append(magnetizations, magnetization)
             mean_magnetization = (initial_magnetization*(len(magnetizations)-1) + magnetization)/len(magnetizations)
@@ -200,8 +205,14 @@ def simulation(B_star_norm, T_star, n, nb_iterations, plot, hexagonal = False):
         # Afficher la figure avec les sous-graphiques
         plt.show()
 
+    print("MAGNETIZATION ARE", magnetizations)
 
-    return mean_energies[-1], heat_capacities[-1], mean_magnetizations[-1]
+    if state.any() == None : 
+
+        return mean_energies[-1], heat_capacities[-1], magnetizations.mean()
+
+    else : 
+        return mean_energies[-1], heat_capacities[-1], magnetizations.mean(), state_matrix
 
 
 

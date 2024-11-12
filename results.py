@@ -10,8 +10,8 @@ import numpy as np
 
 n = [6]
 N = [n**2 for n in n]
-nb_iterations = 10
 
+nb_iterations = 40000
 
 import time
 
@@ -150,7 +150,11 @@ else : ##we look at the hysteresis cycle
 
     ##first magnetization
 
-    B_values = [0.3*i for i in range(49)] + [14.7-0.3*i for i in range(100)] + [0.3*i for i in range(49)]
+    #B_values = [0.01*i for i in range(20)] + [0.2 +0.1*i for i in range(1,150)]
+
+    B_values = [0.1*i for i in range(150)] + [15 - 0.1*i for i in range(1, 300)] +[-15 + 0.1*i for i in range(1, 300)]
+
+    # +[0.7-0.1*i for i in range(1,)] + [0.2-0.01*i for i in range(40)] + [-0.2 - 0.1*i for i in range(1,5)] +[-0.7 + 0.1*i for i in range(1,6)] + [-0.2 + 0.01*i for i in range(40)] + [0.2 +0.1*i for i in range(1,6)]
 
     for B in B_values : 
 
@@ -167,7 +171,7 @@ else : ##we look at the hysteresis cycle
         ### plots ###
 
         # Create a figure with 1 subplot
-        fig, axs = plt.subplots(1, 2, figsize=(8, 6))  # Adjust size if needed
+        fig, axs = plt.subplots(1, 1, figsize=(8, 6))  # Adjust size if needed
 
         # Define colors and styles for each plot
         colors = ["royalblue"]
@@ -180,19 +184,17 @@ else : ##we look at the hysteresis cycle
             linestyle = linestyles[idx % len(linestyles)]
             
             # Plot the magnetization against B_values
-            axs[0].plot(B_values, magnetizations1, '.', label=f'n={number_of_atoms}', color=color, linewidth=linewidth)
-            axs[1].plot(B_values, energies1, '.', label=f'n={number_of_atoms}', color=color, linewidth=linewidth)
-
+            axs.plot(B_values, magnetizations1, '.', label=f'n={number_of_atoms}', color=color, linewidth=linewidth)
             
         # Set titles, labels, legend, and grid
-        axs[0].set_title("Évolution de l'aimantation moyenne", fontsize=14, fontweight='bold')
-        axs[0].set_xlabel("Norme du champ magnétique adimensionnée", fontsize=12)
-        axs[0].set_ylabel("Aimantation moyenne adimensionnée", fontsize=12)
-        axs[0].legend(loc="best", fontsize=7)
-        axs[0].grid(True, linestyle=":", color="grey", alpha=0.6)
+        axs.set_title("Évolution de l'aimantation globale moyenne", fontsize=14, fontweight='bold')
+        axs.set_xlabel("Norme du champ magnétique adimensionnée", fontsize=12)
+        axs.set_ylabel("Aimantation moyenne adimensionnée", fontsize=12)
+        axs.legend(loc="best", fontsize=7)
+        axs.grid(True, linestyle=":", color="grey", alpha=0.6)
 
         # Main title for the figure
-        fig.suptitle("Analyse du cycle d'hystérésis", fontsize=18, fontweight='bold')
+        fig.suptitle("Analyse du cycle d'hystérésis, cas carré", fontsize=18, fontweight='bold')
 
         # Adjust layout to prevent overlap
         plt.tight_layout()
